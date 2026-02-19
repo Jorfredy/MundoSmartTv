@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mundo Smart TV</title>
+
+<style>
+body {
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f5f7fa;
+    color:#111;
+}
+
+header {
+    background:#0f172a;
+    color:white;
+    text-align:center;
+    padding:40px 20px;
+}
+
+header h1 {
+    margin:0;
+    font-size:32px;
+}
+
+header p {
+    margin-top:8px;
+    opacity:0.9;
+}
+
+.container {
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card {
+    background:white;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    overflow:hidden;
+    transition:0.2s;
+    cursor:pointer;
+}
+
+.card:hover {
+    transform:translateY(-5px);
+}
+
+.card img {
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+
+.card-body {
+    padding:15px;
+    text-align:center;
+}
+
+.price {
+    font-weight:bold;
+    font-size:18px;
+    margin:8px 0;
+}
+
+.stock {
+    font-weight:bold;
+}
+
+.stock.in { color:green; }
+.stock.out { color:red; }
+
+.product-view {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.product-box {
+    background:white;
+    max-width:500px;
+    width:100%;
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+}
+
+.btn {
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 15px;
+    background:#22c55e;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.close {
+    margin-top:15px;
+    display:block;
+    cursor:pointer;
+    color:#555;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Mundo Smart TV</h1>
+    <p>Televisiones de diferentes marcas</p>
+</header>
+
+<div class="container">
+    <div id="productos" class="grid"></div>
+</div>
+
+<div id="productView" class="product-view">
+    <div class="product-box" id="productBox"></div>
+</div>
+
+<script>
+
+const SHEET_ID = "1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF";
+const SHEET_NAME = "Sheet1";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&sheet=" + SHEET_NAME;
+
+async function fetchData(){
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+    return parseCSV(text);
+}
+
+function parseCSV(text){
+    const lines = text.trim().split("\n");
+    const headers = lines.shift().split(",").map(h=>h.trim().toLowerCase());
+    return lines.map(line=>{
+        const cols = line.split(",");
+        let obj={};
+        headers.forEach((h,i)=>obj[h]=cols[i]);
+        obj.precio = parseFloat(obj.precio)||0;
+        obj.stock = parseInt(obj.stock)||0;
+        return obj;
+    });
+}
+
+function render(products){
+    const container = document.getElementById("productos");
+    container.innerHTML = products.map(p=>{
+
+        const tvImg = "imagenes/tv-" + p.tamaño + ".png";
+        const logo = "imagenes/" + p.marca.toLowerCase() + ".png";
+
+        const stockClass = p.stock > 0 ? "in" : "out";
+        const stockText = p.stock > 0 ? "Disponible" : "Agotado";
+
+        return `
+        <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${p.tamaño}','${p.precio}')">
+            <img src="${tvImg}" alt="TV">
+            <div class="card-body">
+                <img src="${logo}" alt="${p.marca}" style="height:30px"><br>
+                <h3>${p.marca} ${p.modelo}</h3>
+                <div class="price">$${p.precio.toLocaleString('es-MX')}</div>
+                <div class="stock ${stockClass}">${stockText}</div>
+            </div>
+        </div>
+        `;
+
+    }).join("");
+}
+
+function openProduct(marca,modelo,tamaño,precio){
+    const box = document.getElementById("productBox");
+    box.innerHTML = `
+        <h2>${marca} ${modelo}</h2>
+        <p>${marca} ${tamaño}" Smart TV con excelente calidad de imagen y conectividad HDMI, USB y WiFi.</p>
+        <div class="price">$${Number(precio).toLocaleString('es-MX')}</div>
+        <a class="btn" href="https://wa.me/1234567890?text=Hola quiero pedir la ${marca} ${modelo} de ${tamaño} pulgadas" target="_blank">Contactar y hacer pedido</a>
+        <span class="close" onclick="closeProduct()">Cerrar</span>
+    `;
+    document.getElementById("productView").style.display="flex";
+}
+
+function closeProduct(){
+    document.getElementById("productView").style.display="none";
+}
+
+fetchData().then(render);
+
+</script>
+
+</body>
+</html>
