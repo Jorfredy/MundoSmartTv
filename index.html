@@ -5,65 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mundo Smart TV</title>
 <style>
+/* ===== Estilos globales ===== */
 body {
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f5f7fa;
-    color:#111;
+    margin:0; /* Quita el margen por defecto */
+    font-family: Arial, Helvetica, sans-serif; /* Fuente principal */
+    background:#f5f7fa; /* Color de fondo */
+    color:#111; /* Color de texto */
 }
 header {
-    background:#0f172a;
-    color:white;
-    text-align:center;
-    padding:30px 20px;
+    background:#0f172a; /* Fondo del header */
+    color:white; /* Color de texto */
+    text-align:center; /* Centrar contenido */
+    padding:30px 20px; /* Espaciado interno */
 }
 header h1 { margin:0; font-size:28px; }
 header p { margin-top:5px; opacity:0.9; }
 
+/* Contenedor principal */
 .container { max-width:1100px; margin:20px auto; padding:0 20px; }
 
-/* Barra de búsqueda y filtros */
+/* ===== Barra de búsqueda y filtros ===== */
 .controls {
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    justify-content: space-between;
+    display:flex; /* Flexbox para organizar elementos */
+    flex-wrap:wrap; /* Permite que los elementos pasen a otra línea en pantallas pequeñas */
+    gap:10px; /* Espacio entre elementos */
+    justify-content: space-between; 
     margin-bottom:20px;
 }
-#searchInput {
-    flex:1;
-    padding:8px 10px;
-    border-radius:6px;
-    border:1px solid #ccc;
-}
-#filterBtn {
-    padding:8px 15px;
-    border:none;
-    background:#0f172a;
-    color:white;
-    border-radius:6px;
-    cursor:pointer;
-}
+#searchInput { padding:8px 10px; border-radius:6px; border:1px solid #ccc; }
+#filterBtn { padding:8px 15px; border:none; background:#0f172a; color:white; border-radius:6px; cursor:pointer; }
 
-/* Filtros desplegables */
+/* ===== Filtros desplegables ===== */
 .filters {
-    display:none;
+    display:none; /* Inicialmente ocultos */
     flex-wrap:wrap;
     gap:10px;
     margin-bottom:20px;
 }
-.filters select {
-    padding:6px 10px;
-    border-radius:6px;
-    border:1px solid #ccc;
-}
+.filters select { padding:6px 10px; border-radius:6px; border:1px solid #ccc; }
 
-/* Grid de productos */
-.grid {
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:20px;
-}
+/* ===== Grid de productos ===== */
+.grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; }
 .card {
     background:white;
     border-radius:12px;
@@ -74,23 +56,21 @@ header p { margin-top:5px; opacity:0.9; }
     text-align:center;
     padding:10px;
 }
-.card:hover {
-    transform:translateY(-5px);
-    box-shadow:0 12px 25px rgba(0,0,0,0.15);
-}
+.card:hover { transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.15); }
 .card img { width:100%; height:150px; object-fit:cover; border-radius:10px; }
 .card .marca { font-size:20px; font-weight:bold; margin:8px 0 2px; }
 .card .modelo { font-size:14px; color:#555; margin-bottom:5px; }
 .card .price { font-weight:bold; font-size:16px; margin:5px 0; }
-.card .stock.in { color:green; font-weight:bold; }
-.card .stock.out { color:red; font-weight:bold; }
+.card .stock.in { color:green; font-weight:bold; } /* TV disponible */
+.card .stock.out { color:red; font-weight:bold; } /* TV agotada */
 
-/* Modal de producto */
+/* ===== Modal de producto ===== */
 .product-view {
     position:fixed; top:0; left:0;
     width:100%; height:100%;
     background:rgba(0,0,0,0.7);
-    display:none; align-items:center; justify-content:center;
+    display:none; /* Oculto hasta abrir producto */
+    align-items:center; justify-content:center;
     padding:20px; z-index:999;
 }
 .product-box {
@@ -99,111 +79,40 @@ header p { margin-top:5px; opacity:0.9; }
     padding:20px; text-align:center; overflow-y:auto; max-height:90vh;
 }
 .product-box img { max-width:100%; margin-bottom:10px; border-radius:10px; }
-.btn {
-    display:inline-block; margin-top:15px;
-    padding:10px 15px; background:#22c55e; color:white;
-    text-decoration:none; border-radius:8px; font-weight:bold;
-}
+.btn { display:inline-block; margin-top:15px; padding:10px 15px; background:#22c55e; color:white; text-decoration:none; border-radius:8px; font-weight:bold; }
 .close { margin-top:15px; display:block; cursor:pointer; color:#555; }
 
-/* Paginación con botones “Anterior / Siguiente” */
-.pagination {
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    margin-top:20px;
-}
-.page-btn {
-    padding:8px 16px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    background:#0f172a;
-    color:white;
-    font-weight:bold;
-}
-.page-btn:disabled {
-    background:#ccc;
-    cursor:not-allowed;
-}
+/* ===== Paginación ===== */
+.pagination { display:flex; justify-content:center; gap:15px; margin-top:20px; }
+.page-btn { padding:8px 16px; border:none; border-radius:6px; cursor:pointer; background:#0f172a; color:white; font-weight:bold; }
+.page-btn:disabled { background:#ccc; cursor:not-allowed; }
 
-/* Footer con cinta de color */
+/* ===== Footer con cinta de color ===== */
 footer {
-    text-align:center;
-    margin:30px 0 10px;
-    position: relative;
-    color:white;
-    font-size:14px;
-    background:#0f172a;
-    padding:10px 0;
+    text-align:center; margin:30px 0 10px; position: relative;
+    color:white; font-size:14px; background:#0f172a; padding:10px 0;
 }
-footer::before {
-    content:"";
-    position:absolute;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:#0f172a;
-    transform:skewY(-3deg);
-    z-index:-1;
-}
+footer::before { content:""; position:absolute; top:0; left:0; width:100%; height:100%; background:#0f172a; transform:skewY(-3deg); z-index:-1; }
 
-@media(max-width:600px){
-    .grid { grid-template-columns:1fr; }
-}
+/* ===== Responsive ===== */
+@media(max-width:600px){ .grid { grid-template-columns:1fr; } }
 </style>
-</head>
-<body>
-
-<header>
-    <h1>Mundo Smart TV</h1>
-    <p>Encuentra tu TV perfecta</p>
-</header>
-
-<div class="container controls">
-    <input type="text" id="searchInput" placeholder="Buscar por marca o modelo...">
-    <button id="filterBtn">Filtros</button>
-</div>
-
-<div class="container filters" id="filterSection">
-    <select id="marcaFilter"><option value="">Todas las marcas</option></select>
-    <select id="tamanoFilter"><option value="">Todos los tamaños</option></select>
-    <select id="ordenPrecio">
-        <option value="">Ordenar por precio</option>
-        <option value="desc">Mayor a menor</option>
-        <option value="asc">Menor a mayor</option>
-    </select>
-    <select id="ordenTamano">
-        <option value="">Ordenar por tamaño</option>
-        <option value="asc">Menor a mayor</option>
-        <option value="desc">Mayor a menor</option>
-    </select>
-</div>
-
-<div class="container">
-    <div id="productos" class="grid"></div>
-    <div class="pagination">
-        <button class="page-btn" id="prevBtn">Anterior</button>
-        <button class="page-btn" id="nextBtn">Siguiente</button>
-    </div>
-</div>
-
-<div id="productView" class="product-view">
-    <div class="product-box" id="productBox"></div>
-</div>
-
-<footer>
-    &copy; 2026 Mundo Smart TV. Todos los derechos reservados.
-</footer>
 
 <script>
+// URL del JSON de Google Sheets
 const JSON_URL = "https://sheetjson.com/spreadsheets/d/1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF?gid=0";
-let productosGlobal = [];
-let currentPage = 1;
-const itemsPerPage = 8; // 2 columnas x 4 filas
 
+let productosGlobal = []; // Array donde se guardan todos los productos
+let currentPage = 1; // Página actual
+const itemsPerPage = 8; // Productos por página (2 columnas x 4 filas)
+
+// ===== Fetch de datos =====
 async function fetchData(){
+    // Obtiene datos desde Google Sheets
     const res = await fetch(JSON_URL);
     const data = await res.json();
+
+    // Mapea los datos para tener estructura consistente
     productosGlobal = data.map(p => ({
         marca: p.marca || p.Marca || "",
         modelo: p.modelo || p.Modelo || "",
@@ -212,13 +121,15 @@ async function fetchData(){
         stock: parseInt(p.stock || p.Stock || "0"),
         descripciones: p.descripciones || ""
     }));
-    populateFilters(productosGlobal);
-    renderPage();
+
+    populateFilters(productosGlobal); // Llenar los filtros
+    renderPage(); // Renderizar la primera página
 }
 
+// ===== Llenado de filtros =====
 function populateFilters(products){
-    const marcas = [...new Set(products.map(p=>p.marca))];
-    const tamanos = [...new Set(products.map(p=>p.tamaño))];
+    const marcas = [...new Set(products.map(p=>p.marca))]; // Obtener marcas únicas
+    const tamanos = [...new Set(products.map(p=>p.tamaño))]; // Obtener tamaños únicos
 
     const marcaSelect = document.getElementById("marcaFilter");
     const tamanoSelect = document.getElementById("tamanoFilter");
@@ -226,23 +137,28 @@ function populateFilters(products){
     marcas.forEach(m => { const opt=document.createElement("option"); opt.value=m; opt.text=m; marcaSelect.add(opt); });
     tamanos.forEach(t => { const opt=document.createElement("option"); opt.value=t; opt.text=t; tamanoSelect.add(opt); });
 
+    // Eventos para actualizar listado al cambiar filtros o buscar
     marcaSelect.addEventListener("change",()=>{currentPage=1; renderPage();});
     tamanoSelect.addEventListener("change",()=>{currentPage=1; renderPage();});
     document.getElementById("ordenPrecio").addEventListener("change",()=>{currentPage=1; renderPage();});
     document.getElementById("ordenTamano").addEventListener("change",()=>{currentPage=1; renderPage();});
     document.getElementById("searchInput").addEventListener("input",()=>{currentPage=1; renderPage();});
+
+    // Mostrar/ocultar sección de filtros
     document.getElementById("filterBtn").addEventListener("click", ()=>{
         const f = document.getElementById("filterSection");
         f.style.display = f.style.display==="flex"?"none":"flex";
     });
 }
 
+// ===== Descripción aleatoria de producto =====
 function getRandomDescription(descripciones){
     if(!descripciones) return "Smart TV de alta calidad";
     let arr = Array.isArray(descripciones) ? descripciones : descripciones.split("|");
     return arr[Math.floor(Math.random()*arr.length)];
 }
 
+// ===== Aplicar filtros y búsqueda =====
 function applyFilters(){
     let filtered = [...productosGlobal];
     const marca = document.getElementById("marcaFilter").value.toLowerCase();
@@ -268,12 +184,13 @@ function applyFilters(){
     return filtered;
 }
 
+// ===== Renderizar productos en el grid =====
 function render(products){
     const container = document.getElementById("productos");
     container.innerHTML = products.map(p=>{
-        const stockClass = p.stock>0?"in":"out";
+        const stockClass = p.stock>0?"in":"out"; // Clase para color de stock
         const stockText = p.stock>0?"Disponible":"Agotado";
-        const tvImg = `imagenes/tv-${p.tamaño}.png`;
+        const tvImg = `imagenes/tv-${p.tamaño}.png`; // Imagen según tamaño
         return `
         <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${p.tamaño}','${p.precio}','${p.descripciones}')">
             <img src="${tvImg}" alt="${p.modelo}">
@@ -285,9 +202,9 @@ function render(products){
     }).join("");
 }
 
-// Paginación con botones “Anterior / Siguiente”
+// ===== Paginación =====
 function renderPage(){
-    const filtered = applyFilters();
+    const filtered = applyFilters(); // Aplica filtros y búsqueda
     const totalPages = Math.ceil(filtered.length/itemsPerPage);
     if(currentPage>totalPages) currentPage = totalPages || 1;
     const start = (currentPage-1)*itemsPerPage;
@@ -298,6 +215,7 @@ function renderPage(){
     document.getElementById("nextBtn").disabled = currentPage===totalPages || totalPages===0;
 }
 
+// Botones de paginación
 document.getElementById("prevBtn").addEventListener("click",()=>{
     if(currentPage>1){ currentPage--; renderPage(); }
 });
@@ -307,7 +225,7 @@ document.getElementById("nextBtn").addEventListener("click",()=>{
     if(currentPage<totalPages){ currentPage++; renderPage(); }
 });
 
-// Modal
+// ===== Modal de producto =====
 function openProduct(marca, modelo, tamaño, precio, descripciones){
     const box = document.getElementById("productBox");
     const tvImg = `imagenes/tv-${tamaño}.png`;
