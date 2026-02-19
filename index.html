@@ -309,16 +309,19 @@ function render(products){
         const stockClass = p.stock > 0 ? "in" : "out";
         const stockText = p.stock > 0 ? "Disponible" : "Agotado";
 
-        const ofertaVal = p.oferta ? Number(p.oferta) : null;
+        const ofertaVal = p.oferta ? p.oferta : null; // mantener como string o null
 
         const precioHTML = ofertaVal
             ? `<span class="etiqueta-oferta">Oferta</span> 
-               A solo <span class="precio-nuevo">$${ofertaVal.toLocaleString('es-MX')}</span>
+               A solo <span class="precio-nuevo">$${Number(ofertaVal).toLocaleString('es-MX')}</span>
                <span class="precio-anterior">$${Number(p.precio).toLocaleString('es-MX')}</span>`
             : `<span>A solo $${Number(p.precio).toLocaleString('es-MX')}</span>`;
 
+        // Pasar oferta como string seguro al modal
+        const ofertaParam = ofertaVal !== null ? `'${ofertaVal}'` : 'null';
+
         return `
-        <div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamaño}', ${Number(p.precio)}, ${ofertaVal})">
+        <div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamaño}', ${p.precio}, ${ofertaParam})">
             <img src="${tvImg}" alt="TV ${p.tamaño}">
             <div class="card-body">
                 <h3 style="margin:5px 0;">${p.marca}</h3>
@@ -490,14 +493,17 @@ document.getElementById("nextBtn").addEventListener("click",()=>{
 // Modal
 function openProduct(marca, modelo, tamano, precio, oferta = null){
     const box = document.getElementById("productBox");
-    const tvImg = `imagenes/tv-${tamaño}.png`;
+    const tvImg = `imagenes/tv-${tamano}.png`;
     const modeloKey = modelo.toLowerCase();
     const desc = descripcionesPorModelo[modeloKey] || "Smart TV de alta calidad";
 
-    const precioHTML = oferta
+    // convertir oferta a número si existe
+    const ofertaNum = oferta !== null ? Number(oferta) : null;
+
+    const precioHTML = ofertaNum
         ? `<div class="price" style="text-align:center;">
                <span class="etiqueta-oferta">Oferta</span> 
-               A solo <span class="precio-nuevo">$${Number(oferta).toLocaleString('es-MX')}</span>
+               A solo <span class="precio-nuevo">$${ofertaNum.toLocaleString('es-MX')}</span>
                <span class="precio-anterior">$${Number(precio).toLocaleString('es-MX')}</span>
            </div>`
         : `<div class="price" style="text-align:center;">A solo $${Number(precio).toLocaleString('es-MX')}</div>`;
