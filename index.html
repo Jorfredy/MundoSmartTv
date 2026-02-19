@@ -137,79 +137,32 @@ header p {
     <div class="product-box" id="productBox"></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.4/tabletop.min.js"></script>
 <script>
-
 const SHEET_ID = "1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF";
-const SHEET_NAME = "Sheet1";
-const CSV_URL = `https://api.allorigins.win/raw?url=https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
 
-
-async function fetchData(){
-    const res = await fetch(CSV_URL);
-    const text = await res.text();
-    return parseCSV(text);
+function init() {
+  Tabletop.init({
+    key: SHEET_ID,
+    callback: function(data, tabletop) {
+      // data es un array de objetos con los headers como claves
+      render(data.map(d=>{
+        return {
+          marca: d.marca,
+          modelo: d.modelo,
+          tamaño: d.tamaño,
+          precio: parseFloat(d.precio)||0,
+          stock: parseInt(d.stock)||0
+        };
+      }));
+    },
+    simpleSheet: true
+  });
 }
 
-function parseCSV(text){
-    const lines = text.trim().split("\n");
-    const headers = lines.shift().split(",").map(h=>h.trim().toLowerCase());
-
-    return lines.map(line=>{
-        const cols = line.split(",");
-        let obj = {};
-        headers.forEach((h,i)=>obj[h]=cols[i]);
-        return obj;
-    });
-}
-
-function render(products){
-    const container = document.getElementById("productos");
-
-    container.innerHTML = products.map(p=>{
-
-        const tamano = p.tamano || p.tamaño;
-        const precio = Number(p.precio);
-
-        const tvImg = "imagenes/tv-" + tamano + ".png";
-        const logo = "imagenes/" + p.marca.toLowerCase() + ".png";
-
-        const stockNum = Number(p.stock);
-        const stockText = stockNum > 0 ? "Disponible" : "Agotado";
-        const stockClass = stockNum > 0 ? "in" : "out";
-
-        return `
-        <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${tamano}','${precio}')">
-            <img src="${tvImg}">
-            <div class="card-body">
-                <img src="${logo}" style="height:30px"><br>
-                <h3>${p.marca} ${p.modelo}</h3>
-                <div class="price">$${precio.toLocaleString('es-MX')}</div>
-                <div class="stock ${stockClass}">${stockText}</div>
-            </div>
-        </div>
-        `;
-    }).join("");
-}
-
-function openProduct(marca,modelo,tamano,precio){
-    const box = document.getElementById("productBox");
-    box.innerHTML = `
-        <h2>${marca} ${modelo}</h2>
-        <p>${marca} ${tamano}" Smart TV con excelente calidad de imagen y conectividad HDMI, USB y WiFi.</p>
-        <div class="price">$${Number(precio).toLocaleString('es-MX')}</div>
-        <a class="btn" href="https://wa.me/1234567890?text=Hola quiero pedir la ${marca} ${modelo} de ${tamano} pulgadas" target="_blank">Contactar y hacer pedido</a>
-        <span class="close" onclick="closeProduct()">Cerrar</span>
-    `;
-    document.getElementById("productView").style.display="flex";
-}
-
-function closeProduct(){
-    document.getElementById("productView").style.display="none";
-}
-
-fetchData().then(render);
-
+window.addEventListener('DOMContentLoaded', init);
 </script>
+
 
 
 
