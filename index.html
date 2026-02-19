@@ -306,24 +306,23 @@ function render(products){
     const container = document.getElementById("productos");
     container.innerHTML = products.map(p => {
 
-        const tvImg = `imagenes/tv-${p.tamano}.png`;
+        // Ruta de imagen solo por tamaño
+        const tvImg = `imagenes/tv-${p.tamaño}.png`;
+
         const stockClass = p.stock > 0 ? "in" : "out";
         const stockText = p.stock > 0 ? "Disponible" : "Agotado";
 
-        // asegurar que oferta sea null si no existe
-        const ofertaVal = p.oferta ? Number(p.oferta) : null;
-
-        const precioHTML = ofertaVal
-            ? `<span class="etiqueta-oferta">Oferta</span> <span class="precio-nuevo">$${ofertaVal.toLocaleString('es-MX')}</span> 
-               <span class="precio-anterior">$${Number(p.precio).toLocaleString('es-MX')}</span>`
-            : `<span>A solo $${Number(p.precio).toLocaleString('es-MX')}</span>`;
+        const precioHTML = p.oferta
+            ? `<span class="etiqueta-oferta">Oferta</span>
+               <span class="precio-nuevo">A solo $${p.oferta.toLocaleString('es-MX')}</span>
+               <span class="precio-anterior">$${p.precio.toLocaleString('es-MX')}</span>`
+            : `<span>A solo $${p.precio.toLocaleString('es-MX')}</span>`;
 
         return `
-        <div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamano}', ${Number(p.precio)}, ${ofertaVal})">
-            <img src="${tvImg}" alt="TV ${p.modelo}">
+        <div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamaño}', ${p.precio}, ${p.oferta})">
+            <img src="${tvImg}" alt="TV ${p.tamaño}">
             <div class="card-body">
-                <h3 style="margin:5px 0;">${p.marca}</h3>
-                <p style="font-size:14px; margin:5px 0;">${p.modelo}</p>
+                <h3 class="marca">${p.marca}</h3>
                 <div class="price">${precioHTML}</div>
                 <div class="stock ${stockClass}">${stockText}</div>
             </div>
@@ -490,22 +489,25 @@ document.getElementById("nextBtn").addEventListener("click",()=>{
 };
 
 // Modal
-function openProduct(marca, modelo, tamaño, precio, oferta = null){
+function openProduct(marca, modelo, tamaño, precio, oferta){
     const box = document.getElementById("productBox");
-    const tvImg = `imagenes/tv-${tamano}.png`;
+
+    // Imagen solo por tamaño
+    const tvImg = `imagenes/tv-${tamaño}.png`;
 
     const modeloKey = modelo.toLowerCase();
     const desc = descripcionesPorModelo[modeloKey] || "Smart TV de alta calidad";
 
     const precioHTML = oferta
         ? `<div class="price" style="text-align:center;">
-               <span class="etiqueta-oferta">Oferta</span> A solo <span class="precio-nuevo">$${Number(oferta).toLocaleString('es-MX')}</span>
+               <span class="etiqueta-oferta">Oferta</span>
+               A solo <span class="precio-nuevo">$${Number(oferta).toLocaleString('es-MX')}</span>
                <span class="precio-anterior">$${Number(precio).toLocaleString('es-MX')}</span>
            </div>`
         : `<div class="price" style="text-align:center;">A solo $${Number(precio).toLocaleString('es-MX')}</div>`;
 
     box.innerHTML = `
-        <img src="${tvImg}" alt="TV ${modelo}" style="width:100%; height:auto; border-radius:12px; margin-bottom:15px;">
+        <img src="${tvImg}" alt="TV ${marca}" style="width:100%; height:auto; border-radius:12px; margin-bottom:15px;">
         <h2 style="text-align:center; font-size:28px; margin-bottom:10px;">${marca}</h2>
         <p style="text-align:center; font-size:16px; margin-bottom:15px;">${desc}</p>
         ${precioHTML}
