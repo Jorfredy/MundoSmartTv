@@ -278,22 +278,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ===== Renderizar productos en el grid =====
-    function render(products){
-        const container = document.getElementById("productos");
-        container.innerHTML = products.map(p=>{
-            const stockClass = p.stock>0?"in":"out"; // Clase para stock
-            const stockText = p.stock>0?"Disponible":"Agotado";
-            const tvImg = `imagenes/tv-${p.tamaño}.png`;
-            return `
-            <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${p.tamaño}','${p.precio}','${p.descripciones}')">
-                <img src="${tvImg}" alt="${p.modelo}">
-                <div class="marca">${p.marca}</div>
-                <div class="modelo">${p.modelo}</div>
-                <div class="price">$${p.precio.toLocaleString('es-MX')}</div>
-                <div class="stock ${stockClass}">${stockText}</div>
-            </div>`;
-        }).join("");
-    }
+function render(products){
+    const container = document.getElementById("productos");
+    container.innerHTML = products.map(p=>{
+        const stockClass = p.stock>0?"in":"out";
+        const stockText = p.stock>0?"Disponible":"Agotado";
+        const tvImg = `imagenes/tv-${p.tamaño}.png`;
+        return `
+        <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${p.tamaño}','${p.precio}','${p.descripciones}')">
+            <img src="${tvImg}" alt="${p.modelo}">
+            <div class="marca">${p.marca}</div>
+            <div class="modelo">${p.modelo}</div>
+            <div class="price">$${p.precio.toLocaleString('es-MX')}</div>
+            <div class="stock ${stockClass}">${stockText}</div>
+        </div>`;
+    }).join("");
+}
 
     // ===== Renderizar página con paginación =====
     function renderPage(){
@@ -319,20 +319,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ===== Modal de producto =====
-    function openProduct(marca, modelo, tamaño, precio, descripciones){
-        const box = document.getElementById("productBox");
-        const tvImg = `imagenes/tv-${tamaño}.png`;
-        const desc = getRandomDescription(descripciones);
-        box.innerHTML = `
-            <img src="${tvImg}" alt="TV ${modelo}">
-            <h2>${marca} ${modelo}</h2>
-            <p>${desc}</p>
-            <div class="price">$${Number(precio).toLocaleString('es-MX')}</div>
-            <a class="btn" href="https://wa.me/1234567890?text=Hola quiero pedir la ${marca} ${modelo} de ${tamaño} pulgadas" target="_blank">Contactar y hacer pedido</a>
-            <span class="close" onclick="closeProduct()">Cerrar</span>
-        `;
-        document.getElementById("productView").style.display="flex";
-    }
+function openProduct(marca, modelo, tamaño, precio, descripciones){
+    const box = document.getElementById("productBox");
+    const tvImg = `imagenes/tv-${tamaño}.png`;
+    const desc = getRandomDescription(descripciones);
+    box.innerHTML = `
+        <img src="${tvImg}" alt="TV ${modelo}">
+        <h2>${marca} ${modelo}</h2>
+        <p>${desc}</p>
+        <div class="price">$${Number(precio).toLocaleString('es-MX')}</div>
+        <a class="btn" href="https://wa.me/1234567890?text=Hola quiero pedir la ${marca} ${modelo} de ${tamaño} pulgadas" target="_blank">Contactar y hacer pedido</a>
+        <span class="close" onclick="closeProduct()">Cerrar</span>
+    `;
+    document.getElementById("productView").style.display="flex";
+}
 
     function closeProduct(){ document.getElementById("productView").style.display="none"; }
 
