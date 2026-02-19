@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catálogo - Mundo Smart TV</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <nav>
+    <h1>Mundo Smart TV</h1>
+    <div class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="index.html#beneficios">Beneficios</a>
+      <a href="https://wa.me/526648334032" target="_blank">Contacto</a>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <h2>Catálogo de TVs</h2>
+
+  <div class="controls">
+    <input id="q" placeholder="Buscar modelo o descripción...">
+    <select id="marca"><option value="">Todas las marcas</option></select>
+    <select id="tam"><option value="">Todos los tamaños</option></select>
+    <select id="orden">
+      <option value="relevance">Orden</option>
+      <option value="price_asc">Precio ↑</option>
+      <option value="price_desc">Precio ↓</option>
+      <option value="stock_desc">Stock ↓</option>
+    </select>
+    <button id="refrescar">⟳ Refrescar</button>
+  </div>
+
+  <div id="productos" class="grid" style="margin-top:6px"></div>
+
+  <p class="small-note" style="margin-top:20px">Entrega: $150 MXN en Tijuana por una sola TV — por dos TVs la entrega es gratis. Garantía: 5 meses por defectos de fábrica (no incluye quebraduras, humedad, agua o plaga de insectos).</p>
+</div>
+
+<footer>© 2026 Mundo Smart TV</footer>
+
+<a class="whatsapp-float" href="https://wa.me/526648334032?text=Hola%20quiero%20hacer%20un%20pedido" target="_blank">📲 Pedir</a>
+
+<script>
+const SHEET_ID = "1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF";
+const SHEET_NAME = "Sheet1";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent(SHEET_NAME);
+
+// fetch simple helper
+async function fetchText(url){
+  const r = await fetch(url, {cache: "no-cache"});
+  if(!r.ok) throw new Error('Error cargando: ' + r.statusText);
+  return await r.text();
+}
+
+// CSV parser that handles quoted commas
+function parseCSV(text){
+  const lines = text.trim().split('\n').filter(l=>l.trim()!==''); 
+  const headers = lines.shift().split(',').map(h=>h.trim().toLowerCase());
+  const rows = [];
+  for(const line of lines){
+    const cols = [];
+    let cur = ''; let inQ = false;
+    for(let i=0;i<line.length;i++){
+      const ch = line[i];
+      if(ch === '"'){ inQ = !inQ; continue; }
+      if(ch === ',' && !inQ){ cols.push(cur); cur=''; continue; }
+      cur += ch;
+    }
+    cols.push(cur);
+    const obj = {};
+    headers.forEach((h,i)=> obj[h] = (cols[i] || '').trim());
+    obj.precio = parseFloat((obj.precio||'').replace(/[^0-9.-]+/g,'')) || 0;
+    obj.stock = parseInt(obj.stock||'0') || 0;
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function renderGrid(products){
+  const q = (document.getElementById('q').value || '').toLowerCase();
+  const marca = document.getElementById('marca').value;
+  const tam = document.getElementById('tam').value;
+  const orden = document.getElementById('orden').value;
+  let list = products.slice();
+  if(marca) list = list.filter(p=> (p.marca||'').toLowerCase() === marca.toLowerCase());
+  if(tam) list = list.filter(p=> (p.tamaño||p.tamano||'') == tam);
+  if(q) list = list.filter(p=> ((p.modelo||'') + ' ' + (p.descripcion||'')).toLowerCase().includes(q));
+  if(orden === 'price_asc') list.sort((a,b)=>a.precio - b.precio);
+  if(orden === 'price_desc') list.sort((a,b)=>b.precio - a.precio);
+  if(orden === 'stock_desc') list.sort((a,b)=>b.stock - a.stock);
+  const container = document.getElementById('productos');
+  container.innerHTML = list.map(p=>{
+    const img = (p.imagen && p.imagen.length>5) ? p.imagen : 'https://via.placeholder.com/800x450?text=Mundo+Smart+TV';
+    const stockClass = p.stock > 0 ? 'in' : 'out';
+    const stockText = p.stock > 0 ? `Disponible • ${p.stock}` : 'Agotado';
+    const whatsappMsg = encodeURIComponent(`Hola quiero pedir: ${p.marca} ${p.modelo} ${p.tamaño || ''} pulgadas. Precio listado: $${p.precio.toLocaleString()}`);
+    return `
+      <div class="card">
+        <img src="${img}" alt="${p.modelo || 'TV'}">
+        <div class="card-body">
+          <h3>${p.marca || ''} ${p.modelo || ''}</h3>
+          <div class="meta">${p.descripcion || ''} ${p.tamaño ? '• ' + p.tamaño + '"' : ''}</div>
+          <div class="price">$${p.precio.toLocaleString('es-MX')}</div>
+          <div class="stock ${stockClass}">${stockText}</div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <a class="btn" style="flex:1" href="https://wa.me/526648334032?text=${'${whatsappMsg}'}" target="_blank">📲 Hacer pedido</a>
+            <a class="btn" style="background:#0f172a;color:#fff" href="https://wa.me/526648334032?text=${'${encodeURIComponent("Hola tengo una pregunta sobre " + (p.marca||"") + " " + (p.modelo||""))}'}" target="_blank">❓ Consultar</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('') || '<div style="padding:18px">No hay productos para mostrar.</div>';
+}
+
+// load sheet CSV and initialize filters
+async function load(){
+  try{
+    const csv = await fetchText(CSV_URL);
+    const products = parseCSV(csv);
+    // fill filters
+    const marcas = Array.from(new Set(products.map(p=>p.marca).filter(Boolean))).sort();
+    const tamaños = Array.from(new Set(products.map(p=>p.tamaño || p.tamano).filter(Boolean))).sort((a,b)=>Number(a)-Number(b));
+    const marcaSel = document.getElementById('marca');
+    const tamSel = document.getElementById('tam');
+    marcaSel.innerHTML = '<option value="">Todas las marcas</option>' + marcas.map(m=>`<option value="${m}">${m}</option>`).join('');
+    tamSel.innerHTML = '<option value="">Todos los tamaños</option>' + tamaños.map(t=>`<option value="${t}">${t}</option>`).join('');
+    renderGrid(products);
+    document.getElementById('q').addEventListener('input',()=>renderGrid(products));
+    document.getElementById('marca').addEventListener('change',()=>renderGrid(products));
+    document.getElementById('tam').addEventListener('change',()=>renderGrid(products));
+    document.getElementById('orden').addEventListener('change',()=>renderGrid(products));
+  }catch(err){
+    document.getElementById('productos').innerHTML = '<div style="padding:18px;color:#c00">Error cargando catálogo. Asegúrate de que la hoja esté "Publicada en la web" o compartida públicamente.\n' + err.message + '</div>';
+    console.error(err);
+  }
+}
+
+document.getElementById('refrescar').addEventListener('click', load);
+load();
+
+</script>
+</body>
+</html>
