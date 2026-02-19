@@ -94,7 +94,6 @@ function renderGrid(products){
   if(orden === 'stock_desc') list.sort((a,b)=>b.stock - a.stock);
   const container = document.getElementById('productos');
   container.innerHTML = list.map(p=>{
-    const img = (p.imagen && p.imagen.length>5) ? p.imagen : 'https://via.placeholder.com/800x450?text=Mundo+Smart+TV';
     const stockClass = p.stock > 0 ? 'in' : 'out';
     const stockText = p.stock > 0 ? `Disponible • ${p.stock}` : 'Agotado';
     const whatsappMsg = encodeURIComponent(`Hola quiero pedir: ${p.marca} ${p.modelo} ${p.tamaño || ''} pulgadas. Precio listado: $${p.precio.toLocaleString()}`);
@@ -103,9 +102,8 @@ function renderGrid(products){
         <img src="${img}" alt="${p.modelo || 'TV'}">
         <div class="card-body">
           <h3>${p.marca || ''} ${p.modelo || ''}</h3>
-          <div class="meta">${p.descripcion || ''} ${p.tamaño ? '• ' + p.tamaño + '"' : ''}</div>
           <div class="price">$${p.precio.toLocaleString('es-MX')}</div>
-          <div class="stock ${stockClass}">${stockText}</div>
+          <iv class="stock ${stockClass}">${stockText}</div>
           <div style="margin-top:10px;display:flex;gap:8px">
             <a class="btn" style="flex:1" href="https://wa.me/?text=${'${whatsappMsg}'}" target="_blank">📲 Hacer pedido</a>
             <a class="btn" style="background:#0f172a;color:#fff" href="https://wa.me/?text=${'${encodeURIComponent("Hola tengo una pregunta sobre " + (p.marca||"") + " " + (p.modelo||""))}'}" target="_blank">❓ Consultar</a>
