@@ -137,31 +137,70 @@ header p {
     <div class="product-box" id="productBox"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.4/tabletop.min.js"></script>
 <script>
-const SHEET_ID = "1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF";
+const API_URL = "https://sheet2api.com/v1/75kNaBwjSDST/characters";
 
-function init() {
-  Tabletop.init({
-    key: SHEET_ID,
-    callback: function(data, tabletop) {
-      // data es un array de objetos con los headers como claves
-      render(data.map(d=>{
-        return {
-          marca: d.marca,
-          modelo: d.modelo,
-          tamaño: d.tamaño,
-          precio: parseFloat(d.precio)||0,
-          stock: parseInt(d.stock)||0
-        };
-      }));
-    },
-    simpleSheet: true
-  });
+async function fetchData(){
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        // Convertimos los datos a tu formato esperado
+        return data.map(p => ({
+            marca: p.marca,
+            modelo: p.modelo,
+            tamaño: p.tamaño,
+            precio: parseFloat(p.precio) || 0,
+            stock: parseInt(p.stock) || 0
+        }));
+    } catch(err){
+        console.error("Error cargando el catálogo:", err);
+        return [];
+    }
 }
 
-window.addEventListener('DOMContentLoaded', init);
+function render(products){
+    const container = document.getElementById("productos");
+    container.innerHTML = products.map(p=>{
+        const tvImg = "imagenes/tv-" + p.tamaño + ".png";
+        const logo = "imagenes/" + p.marca.toLowerCase() + ".png";
+
+        const stockClass = p.stock > 0 ? "in" : "out";
+        const stockText = p.stock > 0 ? "Disponible" : "Agotado";
+
+        return `
+        <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${p.tamaño}','${p.precio}')">
+            <img src="${tvImg}" alt="TV">
+            <div class="card-body">
+                <img src="${logo}" alt="${p.marca}" style="height:30px"><br>
+                <h3>${p.marca} ${p.modelo}</h3>
+                <div class="price">$${p.precio.toLocaleString('es-MX')}</div>
+                <div class="stock ${stockClass}">${stockText}</div>
+            </div>
+        </div>
+        `;
+    }).join("");
+}
+
+function openProduct(marca,modelo,tamaño,precio){
+    const box = document.getElementById("productBox");
+    box.innerHTML = `
+        <h2>${marca} ${modelo}</h2>
+        <p>${marca} ${tamaño}" Smart TV con excelente calidad de imagen y conectividad HDMI, USB y WiFi.</p>
+        <div class="price">$${Number(precio).toLocaleString('es-MX')}</div>
+        <a class="btn" href="https://wa.me/1234567890?text=Hola quiero pedir la ${marca} ${modelo} de ${tamaño} pulgadas" target="_blank">Contactar y hacer pedido</a>
+        <span class="close" onclick="closeProduct()">Cerrar</span>
+    `;
+    document.getElementById("productView").style.display="flex";
+}
+
+function closeProduct(){
+    document.getElementById("productView").style.display="none";
+}
+
+// Cargamos los productos
+fetchData().then(render);
 </script>
+
 
 
 
