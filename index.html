@@ -60,13 +60,13 @@ header p { margin-top:5px; opacity:0.9; }
 .oferta-badge {
     position: absolute;
     top: 10px;
-    left: -5px;
+    left: 0;
     background: #ef4444;
     color: white;
     font-weight: bold;
-    padding: 5px 10px;
-    transform: rotate(-45deg);
-    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
     z-index: 10;
 }
 .etiqueta-oferta {
@@ -140,6 +140,13 @@ header p { margin-top:5px; opacity:0.9; }
     background:rgba(0,0,0,0.7);
     display:none; align-items:center; justify-content:center;
     padding:20px; z-index:999;
+}
+.product-box .oferta-badge {
+    top: 0;
+    left: 0;
+    font-size: 18px;
+    padding: 10px 18px;
+    border-radius: 0 12px 12px 0;
 }
 .product-box {
     background:white;
@@ -344,26 +351,35 @@ function render(products){
     }).join("");
 }
 // Paginación con botones “Anterior / Siguiente”
-function renderPage(){
-    const filtered = applyFilters();
-    const totalPages = Math.ceil(filtered.length/itemsPerPage);
-    if(currentPage>totalPages) currentPage = totalPages || 1;
-    const start = (currentPage-1)*itemsPerPage;
-    const end = start+itemsPerPage;
-    render(filtered.slice(start,end));
+function render(products){
+    const container = document.getElementById("productos");
+    container.innerHTML = products.map(p => {
 
-    document.getElementById("prevBtn").disabled = currentPage===1;
-    document.getElementById("nextBtn").disabled = currentPage===totalPages || totalPages===0;
+        const tvImg = `imagenes/tv-${p.tamaño}.png`;
+        const stockClass = p.stock > 0 ? "in" : "out";
+        const stockText = p.stock > 0 ? "Disponible" : "Agotado";
+
+        const ofertaVal = p.oferta ? Number(p.oferta) : null;
+
+        const precioHTML = ofertaVal
+            ? `A SOLO <span class="precio-nuevo">$${ofertaVal.toLocaleString('es-MX')}</span> DE 
+               <span class="precio-anterior">$${Number(p.precio).toLocaleString('es-MX')}</span>`
+            : `A SOLO $${Number(p.precio).toLocaleString('es-MX')}`;
+
+        return `
+        <div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamaño}', ${Number(p.precio)}, ${ofertaVal})">
+            ${ofertaVal ? `<div class="oferta-badge">OFERTA</div>` : ""}
+            <img src="${tvImg}" alt="TV ${p.modelo}">
+            <div class="card-body">
+                <h3 style="margin:5px 0;">${p.marca}</h3>
+                <div class="price">${precioHTML}</div>
+                <div class="stock ${stockClass}">${stockText}</div>
+            </div>
+        </div>
+        `;
+    }).join("");
 }
 
-document.getElementById("prevBtn").addEventListener("click",()=>{
-    if(currentPage>1){ currentPage--; renderPage(); }
-});
-document.getElementById("nextBtn").addEventListener("click",()=>{
-    const filtered = applyFilters();
-    const totalPages = Math.ceil(filtered.length/itemsPerPage);
-    if(currentPage<totalPages){ currentPage++; renderPage(); }
-});
 
 // Descripciones fijas por marca
     const descripcionesPorModelo = {
@@ -503,23 +519,20 @@ document.getElementById("nextBtn").addEventListener("click",()=>{
 // Modal
 function openProduct(marca, modelo, tamaño, precio, oferta = null){
     const box = document.getElementById("productBox");
-    const tvImg = `imagenes/tv-${tamaño}.png`;
-
-    const modeloKey = modelo.toLowerCase();
-    const desc = descripcionesPorModelo[modeloKey] || "Smart TV de alta calidad";
+    const tvImg = `imagenes/tv-${tamano}.png`;
+    const desc = descripcionesPorModelo[modelo.toLowerCase()] || "Smart TV de alta calidad";
 
     const precioHTML = oferta
-        ? `<div class="price" style="text-align:center;">
-               <span class="etiqueta-oferta">Oferta</span> A solo <span class="precio-nuevo">$${Number(oferta).toLocaleString('es-MX')}</span>
-               <span class="precio-anterior">$${Number(precio).toLocaleString('es-MX')}</span>
-           </div>`
-        : `<div class="price" style="text-align:center;">A solo $${Number(precio).toLocaleString('es-MX')}</div>`;
+        ? `A SOLO <span class="precio-nuevo">$${Number(oferta).toLocaleString('es-MX')}</span> DE 
+           <span class="precio-anterior">$${Number(precio).toLocaleString('es-MX')}</span>`
+        : `A SOLO $${Number(precio).toLocaleString('es-MX')}`;
 
     box.innerHTML = `
+        ${oferta ? `<div class="oferta-badge">OFERTA</div>` : ""}
         <img src="${tvImg}" alt="TV ${modelo}" style="width:100%; height:auto; border-radius:12px; margin-bottom:15px;">
         <h2 style="text-align:center; font-size:28px; margin-bottom:10px;">${marca}</h2>
         <p style="text-align:center; font-size:16px; margin-bottom:15px;">${desc}</p>
-        ${precioHTML}
+        <div class="price" style="text-align:center;">${precioHTML}</div>
         <a class="btn" href="https://wa.me/1234567890?text=Hola quiero pedir la ${marca}" target="_blank">Contactar y hacer pedido</a>
         <span class="close" onclick="closeProduct()">Cerrar</span>
     `;
