@@ -1,0 +1,31 @@
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,Helvetica,sans-serif}
+body{background:#f4f6f9;color:#111;line-height:1.45}
+a{color:inherit}
+header{background:#0f172a;color:#fff;padding:14px 22px;position:sticky;top:0;z-index:40}
+nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+nav h1{font-size:18px;letter-spacing:0.2px}
+nav .menu a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600}
+.hero{background:linear-gradient(90deg,#0f172a 0%,#1e293b 100%);color:#fff;padding:60px 18px;text-align:center}
+.hero h2{font-size:34px;margin-bottom:8px}
+.hero p{opacity:.9}
+.btn{display:inline-block;margin-top:14px;padding:10px 18px;background:#22c55e;color:#fff;border-radius:8px;text-decoration:none;font-weight:700}
+.container{max-width:1100px;margin:28px auto;padding:0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(2,6,23,0.08);border:1px solid rgba(15,23,42,0.04)}
+.card img{width:100%;height:170px;object-fit:cover;background:#e9eef6}
+.card-body{padding:14px}
+.card-body h3{font-size:16px;margin-bottom:6px;color:#0f172a}
+.meta{color:#475569;font-size:13px}
+.price{font-size:18px;font-weight:800;color:#0f172a;margin-top:8px}
+.stock{margin-top:8px;font-weight:700}
+.stock.in{color:#116530}
+.stock.out{color:#b91c1c}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.controls input, .controls select{padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;min-width:130px}
+.small-note{font-size:13px;color:#475569;margin-top:8px}
+.benefits{margin-top:22px}
+.benefits .grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.benefits .card{padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff)}
+footer{background:#0f172a;color:#fff;padding:28px 18px;margin-top:34px;text-align:center;border-top:4px solid rgba(34,197,94,0.06)}
+.whatsapp-float{position:fixed;right:18px;bottom:18px;background:#22c55e;color:#fff;padding:14px 16px;border-radius:999px;text-decoration:none;font-weight:800;box-shadow:0 10px 30px rgba(2,6,23,0.18);z-index:999}
+@media(max-width:640px){.hero h2{font-size:26px}.controls{flex-direction:column;align-items:stretch}nav h1{font-size:16px}}
