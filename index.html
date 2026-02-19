@@ -187,11 +187,11 @@ function render(products){
     }).join("");
 }
 
-function openProduct(marca,modelo,tamaño,precio){
+function openProduct(marca,modelo,tamano,precio){
     const box = document.getElementById("productBox");
     box.innerHTML = `
         <h2>${marca} ${modelo}</h2>
-        <p>${marca} ${tamaño}" Smart TV con excelente calidad de imagen y conectividad HDMI, USB y WiFi.</p>
+        <p>${marca} ${tamano}" Smart TV con excelente calidad de imagen y conectividad HDMI, USB y WiFi.</p>
         <div class="price">$${Number(precio).toLocaleString('es-MX')}</div>
         <a class="btn" href="https://wa.me/1234567890?text=Hola quiero pedir la ${marca} ${modelo} de ${tamano} pulgadas" target="_blank">Contactar y hacer pedido</a>
         <span class="close" onclick="closeProduct()">Cerrar</span>
