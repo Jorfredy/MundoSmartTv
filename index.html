@@ -247,6 +247,7 @@ async function fetchData(){
         modelo: p.modelo || p.Modelo || "",
         tamaño: p.tamano || p.Tamano || "",
         precio: parseFloat(p.precio || p.Precio || "0"),
+		oferta: p.oferta || p.Oferta || null,
         stock: parseInt(p.stock || p.Stock || "0"),
         descripciones: p.descripciones || ""
     }));
