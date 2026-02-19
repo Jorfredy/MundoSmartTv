@@ -141,7 +141,7 @@ header p {
 
 const SHEET_ID = "1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF";
 const SHEET_NAME = "Sheet1";
-const CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&sheet=" + SHEET_NAME;
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
 
 async function fetchData(){
     const res = await fetch(CSV_URL);
@@ -152,38 +152,41 @@ async function fetchData(){
 function parseCSV(text){
     const lines = text.trim().split("\n");
     const headers = lines.shift().split(",").map(h=>h.trim().toLowerCase());
+
     return lines.map(line=>{
         const cols = line.split(",");
-        let obj={};
+        let obj = {};
         headers.forEach((h,i)=>obj[h]=cols[i]);
-        obj.precio = parseFloat(obj.precio)||0;
-        obj.stock = parseInt(obj.stock)||0;
         return obj;
     });
 }
 
 function render(products){
     const container = document.getElementById("productos");
+
     container.innerHTML = products.map(p=>{
 
-        const tvImg = "imagenes/tv-" + p.tamano + ".png";
+        const tamano = p.tamano || p.tamaño;
+        const precio = Number(p.precio);
+
+        const tvImg = "imagenes/tv-" + tamano + ".png";
         const logo = "imagenes/" + p.marca.toLowerCase() + ".png";
 
-        const stockClass = p.stock > 0 ? "in" : "out";
-        const stockText = p.stock > 0 ? "Disponible" : "Agotado";
+        const stockNum = Number(p.stock);
+        const stockText = stockNum > 0 ? "Disponible" : "Agotado";
+        const stockClass = stockNum > 0 ? "in" : "out";
 
         return `
-        <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${p.tamano}','${p.precio}')">
-            <img src="${tvImg}" alt="TV">
+        <div class="card" onclick="openProduct('${p.marca}','${p.modelo}','${tamano}','${precio}')">
+            <img src="${tvImg}">
             <div class="card-body">
-                <img src="${logo}" alt="${p.marca}" style="height:30px"><br>
+                <img src="${logo}" style="height:30px"><br>
                 <h3>${p.marca} ${p.modelo}</h3>
-                <div class="price">$${p.precio.toLocaleString('es-MX')}</div>
+                <div class="price">$${precio.toLocaleString('es-MX')}</div>
                 <div class="stock ${stockClass}">${stockText}</div>
             </div>
         </div>
         `;
-
     }).join("");
 }
 
@@ -206,6 +209,7 @@ function closeProduct(){
 fetchData().then(render);
 
 </script>
+
 
 </body>
 </html>
