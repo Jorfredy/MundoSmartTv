@@ -138,19 +138,18 @@ header p {
 </div>
 
 <script>
-const API_URL = "https://sheet2api.com/v1/75kNaBwjSDST/characters";
+const JSON_URL = "https://sheetjson.com/spreadsheets/d/1-XvTphECWH1qlJvIzMAHrhRYyFURMDoF?gid=0";
 
 async function fetchData(){
     try {
-        const res = await fetch(API_URL);
+        const res = await fetch(JSON_URL);
         const data = await res.json();
-        // Convertimos los datos a tu formato esperado
         return data.map(p => ({
-            marca: p.marca,
-            modelo: p.modelo,
-            tamaño: p.tamaño,
-            precio: parseFloat(p.precio) || 0,
-            stock: parseInt(p.stock) || 0
+            marca: p.marca || p.Marca || "",
+            modelo: p.modelo || p.Modelo || "",
+            tamaño: p.tamano || p.Tamano || "", // <-- aquí usamos "tamano" sin ñ
+            precio: parseFloat(p.precio || p.Precio || "0"),
+            stock: parseInt(p.stock || p.Stock || "0")
         }));
     } catch(err){
         console.error("Error cargando el catálogo:", err);
@@ -197,10 +196,9 @@ function closeProduct(){
     document.getElementById("productView").style.display="none";
 }
 
-// Cargamos los productos
+// Cargamos los productos al inicio
 fetchData().then(render);
 </script>
-
 
 
 
