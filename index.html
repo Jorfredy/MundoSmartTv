@@ -354,12 +354,11 @@ function render(products){
 function render(products){
     const container = document.getElementById("productos");
     container.innerHTML = products.map(p => {
-
         const tvImg = `imagenes/tv-${p.tamaño}.png`;
         const stockClass = p.stock > 0 ? "in" : "out";
         const stockText = p.stock > 0 ? "Disponible" : "Agotado";
 
-        const ofertaVal = p.oferta ? Number(p.oferta) : null;
+        const ofertaVal = p.oferta && !isNaN(Number(p.oferta)) ? Number(p.oferta) : null;
 
         const precioHTML = ofertaVal
             ? `A SOLO <span class="precio-nuevo">$${ofertaVal.toLocaleString('es-MX')}</span> DE 
@@ -369,7 +368,7 @@ function render(products){
         return `
         <div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamaño}', ${Number(p.precio)}, ${ofertaVal})">
             ${ofertaVal ? `<div class="oferta-badge">OFERTA</div>` : ""}
-            <img src="${tvImg}" alt="TV ${p.modelo}">
+            <img src="${tvImg}" alt="TV ${p.marca}">
             <div class="card-body">
                 <h3 style="margin:5px 0;">${p.marca}</h3>
                 <div class="price">${precioHTML}</div>
@@ -379,8 +378,6 @@ function render(products){
         `;
     }).join("");
 }
-
-
 // Descripciones fijas por marca
     const descripcionesPorModelo = {
 "samsung 32 4 series": "samsung 32 4 series, resolución HD compacta y confiable con Smart TV integrado.",
@@ -522,14 +519,16 @@ function openProduct(marca, modelo, tamaño, precio, oferta = null){
     const tvImg = `imagenes/tv-${tamano}.png`;
     const desc = descripcionesPorModelo[modelo.toLowerCase()] || "Smart TV de alta calidad";
 
-    const precioHTML = oferta
-        ? `A SOLO <span class="precio-nuevo">$${Number(oferta).toLocaleString('es-MX')}</span> DE 
+    const ofertaVal = oferta && !isNaN(Number(oferta)) ? Number(oferta) : null;
+
+    const precioHTML = ofertaVal
+        ? `A SOLO <span class="precio-nuevo">$${ofertaVal.toLocaleString('es-MX')}</span> DE 
            <span class="precio-anterior">$${Number(precio).toLocaleString('es-MX')}</span>`
         : `A SOLO $${Number(precio).toLocaleString('es-MX')}`;
 
     box.innerHTML = `
-        ${oferta ? `<div class="oferta-badge">OFERTA</div>` : ""}
-        <img src="${tvImg}" alt="TV ${modelo}" style="width:100%; height:auto; border-radius:12px; margin-bottom:15px;">
+        ${ofertaVal ? `<div class="oferta-badge">OFERTA</div>` : ""}
+        <img src="${tvImg}" alt="TV ${marca}" style="width:100%; height:auto; border-radius:12px; margin-bottom:15px;">
         <h2 style="text-align:center; font-size:28px; margin-bottom:10px;">${marca}</h2>
         <p style="text-align:center; font-size:16px; margin-bottom:15px;">${desc}</p>
         <div class="price" style="text-align:center;">${precioHTML}</div>
