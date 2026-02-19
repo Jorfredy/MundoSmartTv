@@ -489,7 +489,7 @@ document.getElementById("nextBtn").addEventListener("click",()=>{
 // Modal
 function openProduct(marca, modelo, tamaño, precio, oferta = null){
     const box = document.getElementById("productBox");
-    const tvImg = `imagenes/tv-${tamaño}.png`;
+    const tvImg = `imagenes/tv-${tamano}.png`;
 
     const modeloKey = modelo.toLowerCase();
     const desc = descripcionesPorModelo[modeloKey] || "Smart TV de alta calidad";
