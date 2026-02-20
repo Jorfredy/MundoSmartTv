@@ -93,6 +93,21 @@ header p { margin-top:5px; opacity:0.9; }
     grid-template-columns: repeat(2, 1fr);
     gap:20px;
 }
+.oferta-badge {
+    position: absolute;
+    top: 10px;
+    left: -40px;             /* mueve la cinta un poco hacia afuera */
+    background: #ef4444;     /* rojo */
+    color: white;
+    font-weight: bold;
+    padding: 5px 50px;       /* ancho de la cinta */
+    font-size: 12px;
+    transform: rotate(-45deg); /* diagonal */
+    z-index: 10;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    pointer-events: none;    /* no interfiere con el clic */
+}
 .card {
     background:white;
     border-radius:12px;           /* Bordes redondeados */
@@ -103,6 +118,7 @@ header p { margin-top:5px; opacity:0.9; }
     text-align:center;
     padding:10px;
     min-height:300px;             /* Hace la tarjeta más alta para que la imagen quepa completa */
+	position: relative;
 }
 .card:hover {
     transform:translateY(-5px);
