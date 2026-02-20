@@ -93,18 +93,6 @@ header p { margin-top:5px; opacity:0.9; }
     grid-template-columns: repeat(2, 1fr);
     gap:20px;
 }
-.card .oferta-badge {
-    position: absolute;
-    top: 10px;
-    left: 0px;
-    background: #ef4444;
-    color: white;
-    font-weight: bold;
-    padding: 5px 10px;
-    font-size: 12px;
-    transform: rotate(-20deg);
-    z-index: 10;
-}
 .card {
     background:white;
     border-radius:12px;           /* Bordes redondeados */
@@ -115,7 +103,6 @@ header p { margin-top:5px; opacity:0.9; }
     text-align:center;
     padding:10px;
     min-height:300px;             /* Hace la tarjeta más alta para que la imagen quepa completa */
-	position: relative;
 }
 .card:hover {
     transform:translateY(-5px);
@@ -334,22 +321,16 @@ function render(products){
         // Pasar oferta como string seguro al modal
         const ofertaParam = ofertaVal !== null ? `'${ofertaVal}'` : 'null';
 
-return `
-<div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamaño}', ${Number(p.precio)}, ${ofertaVal})">
-    ${ofertaVal ? `<div class="oferta-badge">OFERTA</div>` : ""}
-    <img src="imagenes/tv-${p.tamaño}.png" alt="TV ${p.modelo}">
-    <div class="card-body">
-        <h3 style="margin:5px 0;">${p.marca}</h3>
-        <div class="price">
-            ${ofertaVal 
-                ? `A SOLO $${ofertaVal.toLocaleString('es-MX')} DE $${Number(p.precio).toLocaleString('es-MX')}` 
-                : `A SOLO $${Number(p.precio).toLocaleString('es-MX')}`
-            }
+        return `
+        <div class="card" onclick="openProduct('${p.marca}', '${p.modelo}', '${p.tamaño}', ${p.precio}, ${ofertaParam})">
+            <img src="${tvImg}" alt="TV ${p.tamaño}">
+            <div class="card-body">
+                <h3 style="margin:5px 0;">${p.marca}</h3>
+                <div class="price">${precioHTML}</div>
+                <div class="stock ${stockClass}">${stockText}</div>
+            </div>
         </div>
-        <div class="stock ${stockClass}">${stockText}</div>
-    </div>
-</div>
-`;
+        `;
     }).join("");
 }
 
